@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n\n### get country shpfiles =======================================================\n\nlibrary(rnaturalearth)\n\n\n\n# read and reproject countries  -  and ticks to  Robinson \nnatearth_dir <- '../../../chap5_global_inland_fish_catch/data/gis/nat_earth'\ncountries <- readOGR(natearth_dir, 'ne_110m_admin_0_countries')\ncountries_df <- fortify(countries)\ncountries_robin <- spTransform(countries, CRS('+proj=robin'))\ncountries_robin_df <- fortify(countries_robin)\n\n\n# read and reproject outside box\nbbox <- ne_download(scale = 'small', type='wgs84_bounding_box', category='physical', returnclass = 'sp')\n#bbox <- readOGR(natearth_dir, 'ne_110m_wgs84_bounding_box') \nbbox_robin <- spTransform(bbox, CRS('+proj=robin'))  # reproject bounding box\nbbox_robin_df <- fortify(bbox_robin)\n\n\n\nlibrary(sf)\n\n\n# /----------------------------------------------------------------------------#\n#/    get polygon of continent outline                                     -----\nlibrary(rworldmap)\ndata(coastsCoarse)\ncoastsCoarse_robin <- spTransform(coastsCoarse, CRS('+proj=robin')) \ncoastsCoarse_robin_df <- fortify(coastsCoarse_robin)\n\n\n\n### DOESN'T WORK - FIX DATELINE CROSSING IN ROBINSON PROJECTION\ncoastsCoarse_sf <- st_as_sf(coastsCoarse)\n\ncoastsCoarse_sf_dateline <- st_wrap_dateline(coastsCoarse_sf, options = c('WRAPDATELINE=YES', 'DATELINEOFFSET=0'))\n\ncoastsCoarse_sf_trans <- st_transform(coastsCoarse_sf_dateline, 54030)\n\ncoastsCoarse_sf_trans_st <- as(coastsCoarse_sf_trans, 'Spatial')\n\n\n",
+    "created" : 1581370077173.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1314135688",
+    "id" : "5F6BC0C2",
+    "lastKnownWriteTime" : 1581370099,
+    "last_content_update" : 1581370099557,
+    "path" : "C:/Users/efluet/Dropbox/side projects/riverine_fisheries_map/scripts/./plots/get_country_bbox_shp_for_ggplot_map.r",
+    "project_path" : "./plots/get_country_bbox_shp_for_ggplot_map.r",
+    "properties" : {
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,13 @@
+{
+    "path" : "C:/Users/efluet/Dropbox/side projects/riverine_fisheries_map/output/results/distrib_catch",
+    "sortOrder" : [
+        {
+            "ascending" : false,
+            "columnIndex" : 4
+        },
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

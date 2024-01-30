@@ -1,0 +1,26 @@
+{
+    "id": "A670D240",
+    "path": "~/Library/CloudStorage/Dropbox/side_projects/fisheries_riv_res_map/scripts/runall.r",
+    "project_path": "runall.r",
+    "type": "r_source",
+    "hash": "1897763567",
+    "contents": "",
+    "dirty": false,
+    "created": 1626511651548.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "cursorPosition": "91,52",
+        "scrollLine": "72",
+        "Source": "Source",
+        "docOutlineVisible": "1"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1705775088,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1705775088181,
+    "read_only": false,
+    "read_only_alternatives": []
+}

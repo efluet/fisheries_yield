@@ -1,0 +1,68 @@
+# TODO: Compare map to previous one from McIntyre et Al
+# TODO: Compare predictions of catch distrib to training data
+# TODO: Make consistent lake mask (or lakes excluded.)
+# TODO: REplace basin catch CSV I'm using; replace with Cathy's for consistency.
+# TODO: Are there more river basins in Lymer's DB?
+# TODO:     Why is Pearl missing? It's not in the PNAS paper, but I had it among basins...
+# TODO:     Fix basin outlines to include deltas... instead use tiles?
+# TODO: USe Cooke 2017 - recreational catch?
+
+
+library(here)
+here()
+
+source('data_proc/import_libs.r')
+# source('plots/get_country_bbox_shp_for_ggplot_map.r')
+source('plots/themes/map_raster_theme.r')
+source('plots/themes/line_plot_theme.r')
+
+sum_raster <- function(raster){sum(cellStats(raster, stat="sum"))}
+
+
+# /---------------------------------------------------------------------
+#/  Prep catch statistics (c1, c2, c3)
+source('data_proc/read_fao_catch.r')
+
+
+# /---------------------------------------------------------------------
+#/ Map of country lvl catch; for all three estimates
+source('plots/map_natcatch.r')
+
+
+# /---------------------------------------------------------------------
+#/   Regression predict
+# e 3 equations: A: absW + Q; B: propW + Q; C: propW + Q + Pop
+# Am I correct in understanding that PropWetland and AbsWetland  are both log10 transformed?
+
+# prep predictios (run only once
+# (slow on laptop)
+source('data_proc/prep_predictor_stack.r')
+
+
+# Loop through model
+# THIS IS WHAT RUNS IT!!!!
+source('data_proc/regression_pred.r')
+
+
+# /----------------------------------------------------------------------------#
+#/   Downscale catch to grid
+# source('data_proc/prep_distrib_catch_grid.r')
+
+
+# /----------------------------------------------------------------------------#
+#/ Plot distributed catch grids 
+# NOTE: THIS IS RUN IN THE LOOP NOW
+# source('plots/map_distrib_catch.r')
+
+
+# Plot cumulative distributions for selected countries
+source('plots/distribution_plots_countries.r')
+
+# QAQC sums of distrib catch 
+source('data_proc/output_qaqc_sums.r')
+
+
+
+
+
+

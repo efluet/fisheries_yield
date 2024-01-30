@@ -1,0 +1,13 @@
+{
+    "sortOrder": [
+        {
+            "columnIndex": 2,
+            "ascending": false
+        },
+        {
+            "columnIndex": 4,
+            "ascending": false
+        }
+    ],
+    "path": "~/Library/CloudStorage/Dropbox/side_projects/fisheries_riv_res_map/scripts/data_proc/riv_fish_map"
+}

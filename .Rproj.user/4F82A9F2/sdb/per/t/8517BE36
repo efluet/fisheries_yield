@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\nm='lm2c'\n\n# Get string of equation to include in title.\nmod_eq <- models %>% \n          filter(model.run ==m ) %>% \n          mutate(label=paste(model.run, '  ', eq)) %>% \n          dplyr::select(label) %>%\n          as.character()\n\n\n# /----------------------------------------------------------------------------#\n#/  Read catch grids\n\ncatch_distrib <- raster(\"../output/results/distrib_catch/distrib_catch_lm2c_c2.tif\" )\ncatch_distrib <- aggregate(catch_distrib, fact=5, fun=sum, na.rm=FALSE)\n\n# declare incoming CSR (should be done wayyyyyyy earlier than this)\ncrs(catch_distrib) <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0' \ncatch_distrib_robin <- projectRaster(catch_distrib, crs=CRS('+proj=robin'), method='ngb', over=TRUE)\n\ncatch_distrib_robin <- as(catch_distrib_robin, 'SpatialPixelsDataFrame')\ncatch_distrib_robin <- as.data.frame(catch_distrib_robin)\nnames(catch_distrib_robin) <- c('layer','x','y')\n\ncatch_distrib_robin <- catch_distrib_robin %>% \n                          filter(layer>0) %>% \n                          mutate(layer=ifelse(layer<10^-1, 10^-1, layer))\n\n\n# /----------------------------------------------------------------------------#\n#/   Make map\n\n\nsource('./plots/get_country_bbox_shp_for_ggplot_map.r')\n\ncatchmap <- ggplot() +\n  \n  # add background country polygons\n  # geom_polygon(data=countries_robin_df, aes(long, lat, group=group), fill='grey90') +\n  \n  # Add wetloss raster  \n  geom_tile(data=catch_distrib_robin, aes(x=x, y=y, fill=layer)) +\n  \n  # add outline of background countries\n  geom_path(data=coastsCoarse_robin_df, aes(long, lat, group=group), color='grey20', size=0.1) +\n  \n  # Add outline bounding box\n  geom_path(data=bbox_robin_df, aes(long, lat, group=group), color='black', size=0.2) +\n  \n  \n  coord_equal() +  \n  theme_raster_map() +\n  labs(title = 'Distributed FAO & Survey catch (c2)',\n       subtitle = mod_eq) +\n  \n  scale_y_continuous(limits=c(-6600000, 8953595)) +\n  \n  # scale_fill_gradient(low='#ffffcc', high='blue', \n  #                     trans='log', \n  #                     breaks=c(10^-1, 10^0, 10^1, 10^2, 10^3, 10^4),\n  #                     labels=c(10^-1, 10^0, 10^1, 10^2, 10^3, 10^4),\n  #                     limits=c(10^-1, 2*10^4)) +\n  # \n  \n  scale_fill_gradient(low='#ffffcc', high='blue', \n                      trans='log', \n                      breaks=c(10^-1, 10^0, 10^1, 10^2, 10^3, 10^4,10^5),\n                      labels=c(10^-1, 10^0, 10^1, 10^2, 10^3, 10^4,10^5),\n                      limits=c(10^-1, 2*10^5)) +\n  \n  guides(fill = guide_colorbar(nbin=10, raster=F, \n                               barheight = 10, barwidth= 1, \n                               frame.colour=c('black'), frame.linewidth=0.7, \n                               ticks.colour='black',  #direction='horizontal',\n                               title = expression(paste('Fish catch\\n(tons yr'^-1*')')))) +\n  \n  theme(legend.position = 'right',\n        legend.direction = 'vertical',\n        plot.margin = unit(c(-1, -1,-1, -1), \"mm\"))\n\n\n#/----------------------------------------------------------------------------#\n#/    Save figure to file \nggsave(paste0('../output/figures/distrib_catch_map/distrib_catch_', m, '_c2_coarse', '.pdf'), \n       catchmap,\n       width=178, height=100, dpi=300, units=\"mm\")#, type = \"cairo-png\")\ndev.off()\n\n",
+    "created" : 1581369796756.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4255702412",
+    "id" : "8517BE36",
+    "lastKnownWriteTime" : 1581377862,
+    "last_content_update" : 1581377862710,
+    "path" : "C:/Users/efluet/Dropbox/side projects/riverine_fisheries_map/scripts/plots/map_distrib_catch.r",
+    "project_path" : "plots/map_distrib_catch.r",
+    "properties" : {
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

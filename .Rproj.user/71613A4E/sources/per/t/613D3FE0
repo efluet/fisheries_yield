@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1578825108702.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1895289406",
+    "id" : "613D3FE0",
+    "lastKnownWriteTime" : 1584149410,
+    "last_content_update" : 1584149410082,
+    "path" : "~/Dropbox/side projects/riverine_fisheries_map/scripts/runall.r",
+    "project_path" : "runall.r",
+    "properties" : {
+        "cursorPosition" : "43,31",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

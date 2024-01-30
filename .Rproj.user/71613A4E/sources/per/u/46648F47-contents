@@ -1,0 +1,8 @@
+rdfc <- rdf %>% filter(distrib_catch_lm2c_c2 > 10^1)
+quantile(rdfc$distrib_catch_lm2c_c2, .99)
+
+
+
+rdfc <- rdf %>% filter(distrib_catch_lm2c_c2 > 10^1)
+sum(rdfc$distrib_catch_lm2c_c2)
+quantile(rdfc$distrib_catch_lm2c_c2, .99)

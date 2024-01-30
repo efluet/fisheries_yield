@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "# TODO: Compare map to previous one from McIntyre et Al\n# TODO: Compare predictions of catch distrib to training data\n# TODO: Make consistent lake mask (or lakes excluded.)\n# TODO: REplace basin catch CSV I'm using; replace with Cathy's for consistency.\n# TODO: Are there more river basins in Lymer's DB?\n# TODO:     Why is Pearl missing? It's not in the PNAS paper, but I had it among basins...\n# TODO:     Fix basin outlines to include deltas... instead use tiles?\n# TODO: USe Cooke 2017 - recreational catch?\n\n\nlibrary(here)\nhere()\n\nsource('data_proc/import_libs.r')\n# source('plots/get_country_bbox_shp_for_ggplot_map.r')\nsource('plots/themes/map_raster_theme.r')\nsource('plots/themes/line_plot_theme.r')\n\nsum_raster <- function(raster){sum(cellStats(raster, stat=\"sum\"))}\n\n\n# /---------------------------------------------------------------------\n#/  Prep catch statistics (c1, c2, c3)\nsource('data_proc/read_fao_catch.r')\n\n\n# /---------------------------------------------------------------------\n#/ Map of country lvl catch; for all three estimates\nsource('plots/map_natcatch.r')\n\n\n# /---------------------------------------------------------------------\n#/   Regression predict\n# e 3 equations: A: absW + Q; B: propW + Q; C: propW + Q + Pop\n# Am I correct in understanding that PropWetland and AbsWetland  are both log10 transformed?\n\n# prep predictios (run only once\n# (slow on laptop)\nsource('data_proc/prep_predictor_stack.r')\n\n\n# Loop through model\n# THIS IS WHAT RUNS IT!!!!\nsource('data_proc/regression_pred.r')\n\n\n# /----------------------------------------------------------------------------#\n#/   Downscale catch to grid\n# source('data_proc/prep_distrib_catch_grid.r')\n\n\n# /----------------------------------------------------------------------------#\n#/ Plot distributed catch grids \n# NOTE: THIS IS RUN IN THE LOOP NOW\n# source('plots/map_distrib_catch.r')\n\n\n# Plot cumulative distributions for selected countries\nsource('plots/distribution_plots_countries.r')\n\n# QAQC sums of distrib catch \nsource('data_proc/output_qaqc_sums.r')\n\n\n\n\n\n\n",
+    "created" : 1571873822578.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1895289406",
+    "id" : "704B2C8E",
+    "lastKnownWriteTime" : 1580765111,
+    "last_content_update" : 1580765111584,
+    "path" : "C:/Users/efluet/Dropbox/side projects/riverine_fisheries_map/scripts/runall.r",
+    "project_path" : "runall.r",
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

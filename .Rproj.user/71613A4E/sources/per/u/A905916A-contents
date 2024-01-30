@@ -1,0 +1,3 @@
+c <- raster('../data/per_km_2_realized_fwfish_distrib_catch_md5.tif')
+c <- log10(c)
+plot(c)

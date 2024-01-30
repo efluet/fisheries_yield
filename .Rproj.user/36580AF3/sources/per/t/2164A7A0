@@ -1,0 +1,27 @@
+{
+    "id": "2164A7A0",
+    "path": "~/Library/CloudStorage/Dropbox/side_projects/fisheries_riv_res_map/scripts/plots/lineplot_dor_thresh.r",
+    "project_path": "plots/lineplot_dor_thresh.r",
+    "type": "r_source",
+    "hash": "4257073588",
+    "contents": "",
+    "dirty": false,
+    "created": 1705634627750.0,
+    "source_on_save": false,
+    "relative_order": 6,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "35,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1699322221,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1699322221,
+    "read_only": false,
+    "read_only_alternatives": []
+}

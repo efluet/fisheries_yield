@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1602221188392.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1591095649",
+    "id" : "CAF9FD74",
+    "lastKnownWriteTime" : 1579849779,
+    "last_content_update" : 1579849779,
+    "path" : "~/Dropbox/side projects/riverine_fisheries_map/scripts/data_proc/regression_pred.r",
+    "project_path" : "data_proc/regression_pred.r",
+    "properties" : {
+        "cursorPosition" : "75,29",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

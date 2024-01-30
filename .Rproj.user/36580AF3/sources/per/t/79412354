@@ -1,0 +1,27 @@
+{
+    "id": "79412354",
+    "path": "~/Library/CloudStorage/Dropbox/side_projects/fisheries_riv_res_map/scripts/data_proc/reservoir_yield/cs_reserv_catch_prep.r",
+    "project_path": "data_proc/reservoir_yield/cs_reserv_catch_prep.r",
+    "type": "r_source",
+    "hash": "701422317",
+    "contents": "",
+    "dirty": false,
+    "created": 1705618508226.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "tempName": "Untitled2",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "11,49",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1705645381,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1705645381999,
+    "read_only": false,
+    "read_only_alternatives": []
+}
