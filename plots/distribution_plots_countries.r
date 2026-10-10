@@ -3,23 +3,28 @@
 #/   Combine catch rasters into stack 
 
 # Make empty stack, including country codes
+ciso <- rast('../output/results/ciso/ciso_num_1km.tif')
 comb_catch_stack <- stack(ciso)
 
-# Read distrib catch rasters
+# Get distrib catch rasters
+selruns = c('lm2c')
+
 for (m in selruns) {
   
   # Read raster
-  catch_distrib <- raster(paste0('../output/results/distrib_catch/distrib_catch_', m, '_c2',  '_rep.tif'))
+  fname <- paste0('../output/results/riv_yield_distrib/riv_yield_distrib_', m, '_', c, '_1km_2024_rep_cap_v10.tif')
+  catch_distrib <- raster(fname)
 
   # Add it to stack
   comb_catch_stack <- stack(comb_catch_stack, catch_distrib)
   }
 
+
 # CROP for testing
 # comb_catch_stackcrop <- crop(comb_catch_stack, extent(10,12,10,12))
 
 # /----------------------------------------------------------------------------#
-#/  PREP THE DF OF DISTRIBUTED CATCH
+#/  PREP THE DF OF DISTRIBUTED CATCH for histogram plot
 
 # rename raster grid
 names(comb_catch_stack) <- c('iso3a', selruns)
@@ -81,7 +86,7 @@ h <- ggplot(catch_df_sel)+
 
 # /----------------------------------------------------------------------------#
 #/    Save figure to file 
-ggsave('../output/figures/distrib_c2_histogram_panel_plot_v2_rep.png', h, 
+ggsave('../output/figures/distrib_c2_histogram_panel_plot_rep_v10.png', h, 
        width=220, height=180, dpi=240, units="mm", type = "cairo-png")
 dev.off()
 

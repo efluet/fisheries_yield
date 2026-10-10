@@ -1,0 +1,200 @@
+
+# TODO: Clean up temperate reservoirs with dubious area estimate;
+#       For ex:  Green Grove Zimbabwe,  San Pedro de Taumb Brasil,
+
+# /----------------------------------------------------------------------------#
+#/  Read database of waterbody case studies 
+cs <- 
+  read.csv('../../../Chap5_inland_fish_catch/output/case_studies/cs_wCoords_cparea_fdens_compil_2024.csv') %>% 
+  filter(WB_TYPE == 'Reservoir') %>% 
+  dplyr::select(WB_NAME, WB_NR, WB_TYPE, COUNTRY, Year, 
+         CATCH, CATCHUNITS, CPAREA, CPAREAUNITS, 
+         WBAREA, AREAunit, AREA_COMPIL, AREA_COMPIL_HA, lat, long, REF_NAME) %>%
+  # Compute catch from CPUA
+  mutate(CATCH_tonnesyr = ifelse(is.na(CATCH) & !is.na(CPAREAUNITS) & !is.na(AREA_COMPIL_HA), CPAREA*AREA_COMPIL_HA/1000, CATCH)) %>% 
+  # Concatenate years and sources
+  group_by(WB_NAME, WB_NR, COUNTRY) %>%
+  mutate(Year = paste0(Year, collapse = ", "),
+         REF_NAME = paste0(REF_NAME, collapse = "; ")) %>% 
+  ungroup() %>% 
+  # Average per waterbody
+  group_by(WB_NAME, WB_NR, COUNTRY, Year, REF_NAME) %>%
+  summarise(CATCH_tonnesyr = mean(CATCH_tonnesyr, na.rm=T),
+            CPAREA = mean(CPAREA, na.rm=T),
+            AREA_km2 = mean(AREA_COMPIL_HA*0.01, na.rm=T),
+            lat=mean(lat, na.rm=T),
+            long=mean(long, na.rm=T)) %>% 
+  ungroup() %>% 
+  # Make latitude group
+  mutate(LAT_GROUP = ifelse(lat <= -23 | lat >= 23, 'Temperate', NA),
+         LAT_GROUP = ifelse(lat <  23  & lat > -23, 'Tropical', LAT_GROUP)) %>% 
+  # Log-transform
+  mutate(log10CATCH_tonnesyr = log10(CATCH_tonnesyr),
+         log10AREA_km2 = log10(AREA_km2)) %>% 
+  # Remove missing rows
+  filter(!is.na(LAT_GROUP),
+         !is.na(CATCH_tonnesyr),
+         !is.na(AREA_km2)) %>% 
+  rename(CPAREA_kghayr=CPAREA,
+         SOURCES= REF_NAME,
+         YEARS=Year,
+         LAT=lat,
+         LONG=long) 
+
+glimpse(cs)
+
+##. Exclude bc it contains aquaculture ponds
+cs <- cs %>% filter(WB_NAME != 'Bung Boraped')
+
+
+# /----------------------------------------------------------------------------#
+#/ Append Russia and South Africa reservoir from Cathy
+cathy_temp_res <- 
+  read.csv('../data/reservoir_yield/ResYield_data_modeling_Feb2018_temperate.csv') %>% 
+  dplyr::select(Reservoir, Country, Area..km2., Latitude, Longitude, Obs.Yield..T.yr., logA, logYield, Source) %>% 
+  mutate(lat_group = 'Temperate')
+
+names(cathy_temp_res) <- c('WB_NAME', 'COUNTRY', 'AREA_km2', 'LAT', 'LONG', 'CATCH_tonnesyr', 
+                           'log10AREA_km2', 'log10CATCH_tonnesyr', 'SOURCES', 'LAT_GROUP')
+
+# glimpse(cathy_temp_res)
+
+# /----------------------------------------------------------------------------#
+#/  Append 46 tropical reservoirs from Cathy
+cathy_trop_res <- 
+  read.csv('../data/reservoir_yield/ResYield_data_modeling_Feb2018_tropical_reserv_reg.csv') %>% 
+  dplyr::select(WB.Name, Country, date.of.data, Area..km2., Latitude, Longitude, Observed.Catch..t., logA, logC, source) %>% 
+  mutate(lat_group = 'Tropical')
+
+names(cathy_trop_res) <- c('WB_NAME', 'COUNTRY', 'YEARS', 'AREA_km2', 'LAT', 'LONG', 'CATCH_tonnesyr', 
+                           'log10AREA_km2', 'log10CATCH_tonnesyr', 'SOURCES', 'LAT_GROUP')
+
+
+# /----------------------------------------------------------------------------#
+#/  Combine reserv yield data source                                 -----------
+
+cs <- cs %>% 
+      bind_rows(., cathy_temp_res) %>% 
+      bind_rows(., cathy_trop_res) %>% 
+      arrange(WB_NAME) %>% 
+      dplyr::select(WB_NAME, COUNTRY, LAT, LONG, YEARS, 
+             AREA_km2, CPAREA_kghayr, CATCH_tonnesyr, 
+             log10AREA_km2, log10CATCH_tonnesyr, SOURCES, LAT_GROUP)
+
+# Average rows to remove duplicates
+# cs <- cs %>% 
+#   group_by(WB_NAME, COUNTRY, LAT_GROUP) %>% 
+#   summarise(across(everything(), mean, na.rm=T)) %>% 
+#   ungroup()
+
+cs <- cs %>% 
+  mutate(WB_NAME = ifelse(WB_NAME %in% c('Nasser','nasser','Nasser/nubia'), 'Nasser', WB_NAME)) %>% 
+  mutate(COUNTRY = ifelse(WB_NAME %in% c('Nasser'), 'Egypt', COUNTRY)) %>% 
+  mutate(WB_NAME = ifelse(WB_NAME %in% c('Nova Avanhadava'), 'Nova Avanhandava', WB_NAME)) %>% 
+  mutate(WB_NAME = ifelse(WB_NAME %in% c('Mampost\xf3n'), 'Mamposton', WB_NAME)) %>%
+  mutate(WB_NAME = ifelse(WB_NAME %in% c('Ravishankarsagar/Gangrel'), 'Ravishankarsagar', WB_NAME)) %>% 
+  mutate(WB_NAME = ifelse(WB_NAME %in% c('Nyumba YaMungu','Nhumbu/Nyumba ya Mungu'), 'Nyumba Ya Mungu', WB_NAME)) %>% 
+  mutate(WB_NAME = ifelse(WB_NAME %in% c('Kodaikanal'), 'Kodai', WB_NAME)) %>% 
+  mutate(COUNTRY = ifelse(WB_NAME %in% c('Guajaro'), 'Colombia', COUNTRY)) %>% 
+  mutate(WB_NAME = ifelse(WB_NAME %in% c('Pimburettewa'), 'Pimburattewa', WB_NAME)) %>% 
+  mutate(WB_NAME = ifelse(WB_NAME %in% c('Parakrama Samudra '), 'Parakrama Samudra', WB_NAME)) %>% 
+  mutate(WB_NAME = ifelse(WB_NAME %in% c('Gobindsagar', 'Govindsagar'), 'Gobind Sagar', WB_NAME))
+
+cs <- 
+  cs %>% 
+  group_by(WB_NAME, COUNTRY) %>% 
+  filter(CATCH_tonnesyr == max(CATCH_tonnesyr)) %>% 
+  ungroup()
+  # summarise_all(., .funs=mean, na.rm=T)
+
+
+# /----------------------------------------------------------------------------#
+#/   Convert to reservoir polygons with attributes
+res_poly <- 
+  st_read('../data/GDW/GDW_v0_2_beta/GDW_v0_2_beta_shp/GDW_reservoirs_v0_2.shp') %>% 
+  filter(AREA_SKM >= 0.1,
+         is.na(LAKE_CTRL),
+         is.na(TIMELINE) | TIMELINE == 'Modified')
+
+# Get ids of polygons 
+res_poly_csid <-st_nearest_feature(cs, res_poly)
+
+# Select polygon
+res_poly_cs <- res_poly[res_poly_csid,]
+
+# /----------------------------------------------------------------------------#
+#/  Extract temperature                                               ----------
+
+temp_1km <- rast('../data/waterTemp/temp_1km.tif')
+
+cs <- 
+  cs %>%  
+  mutate(temp = terra::extract(temp_1km, res_poly_cs, fun=mean, na.rm=T)[,2]) 
+
+
+
+# /----------------------------------------------------------------------------#
+#/   Extract population in buffer around reservoir
+
+# Get population raster
+pop <- rast('../data/pop/gpw_v4_population_count_rev11_2015_30_sec.tif')
+# pop[pop==0] <- NA
+# pop <- crop(pop, ext(glwdv2_perc_1km_nopeat))
+
+# Create buffer around reservoir polygons;  as multiples of the ~500m pixels
+res_poly_cs_buf <- st_buffer(res_poly_cs, 0.0041666667 * 2)
+
+cs <- 
+  cs %>%  
+  mutate(pop_buf = terra::extract(pop, res_poly_cs_buf, fun=mean, ID=TRUE, na.rm=T)[,2]) %>% 
+  mutate(pop_buf = ifelse(pop_buf==0, 10^-10, pop_buf)) %>% 
+  filter(!is.na(pop_buf)) %>% 
+  mutate(log10pop_buf = log10(pop_buf)) 
+
+
+# /----------------------------------------------------------------------------#
+#/   FIT MODEL
+
+
+# Table of model selection
+options(na.action = "na.fail")
+library(MuMIn)
+
+dd <- 
+  dredge( rlm(log10CATCH_tonnesyr ~ log10AREA_km2 + temp + log10pop_buf, data=cs, na.omit=T)) %>% 
+  as.data.frame()
+
+# Fit model
+lm_reserv <- rlm(log10CATCH_tonnesyr ~ log10AREA_km2 + temp + log10pop_buf, data=cs_pts)
+
+cs <-  
+  cs %>% 
+  mutate(log10predCATCH_tonnesyr = predict(lm_reserv)) %>% 
+  mutate(predCATCH_tonnesyr = 10^log10predCATCH_tonnesyr) %>% 
+  mutate(predCATCH_tonnesyr_lwr = 10^predict(lm_reserv, interval='prediction')[,2]) %>% 
+  mutate(predCATCH_tonnesyr_upr = 10^predict(lm_reserv, interval='prediction')[,3])
+
+
+
+# /----------------------------------------------------------------------------#
+#/   Convert to points
+cs_pts <-
+  cs %>%
+  filter(!is.na(LAT)) %>%
+  st_as_sf(., coords = c("LONG","LAT"), remove = FALSE) %>%
+  st_set_crs(st_crs(4326)) %>%
+  st_as_sf()
+
+
+
+# /----------------------------------------------------------------------------#
+#/  SAVE                                                             ----------
+
+# Save reservoir training points
+if(1){
+  st_write(cs_pts, '../output/results/res_train_yield/cs_reserv_catch_2024_wpreds_v10.gpkg', delete_dsn=T)
+
+  # Save table (without temp)
+  write.csv(cs, '../output/results/res_train_yield/cs_reserv_catch_2024_wpreds_v10.csv', row.names = F)
+  }
+

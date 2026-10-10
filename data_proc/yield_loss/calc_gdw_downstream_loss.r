@@ -1,16 +1,16 @@
 
 # Get DOR computed from GDW dams; between 0-1 range
-gdw_dor <- rast('../output/dor/gdw_dor_v8.tif')
+gdw_dor <- rast('../output/results/dor/gdw_dor_v8.tif')
 
 # Get riverine catch in tons
-catch_distrib_1km <- rast("../output/results/distrib_catch/distrib_catch_lm2c_catch.c2_1km_2023_rep.tif" ) * 10^6
+catch_distrib_1km <- rast("../output/results/riv_yield_distrib/riv_yield_distrib_lm2c_catch.c2_1km_2024_rep_cap_v10.tif" ) * 10^6
 
 
 # /---------------------------------------------------------------------------#
 #/    Mask reservoir footprings from DOR losses to avoid counting 
 
 # Prep the GDW mask
-gdw_frac_1km <- rast('../output/gdw/GDW_frac_1km.tif')
+gdw_frac_1km <- rast('../output/results/res_yield_gdw/GDW_frac_1km.tif')
 # gdw_frac_1km <- extend(gdw_frac_1km, com_ext, snap="near")
 gdw_frac_1km <- extend(gdw_frac_1km, gdw_dor, snap="near")
 # ext(gdw_frac_1km) <- ext(com_ext)
@@ -29,9 +29,9 @@ non_gdw_frac <- 1 - gdw_frac_1km
 #/   Loop and test different DOR thresholds
 
 # Make list of lower DOR threshold
-# dor_thresh <- seq(0, 1, .1)
-dor_thresh <- c(0, 0.02, 0.05, seq(0.1, .5, .1))
-# dor_thresh <- c(0.2)
+
+# dor_thresh <- c(0, 0.01, 0.02, 0.04, 0.05, seq(0.1, 1.0, .1))
+dor_thresh <- c(0, 0.02, 0.04)
 
 dor_thresh_df <- data.frame()
 
@@ -57,12 +57,29 @@ for (t in dor_thresh){
   
   # /---------------------------------------------------------------------------#
   #/    Save raster for threshold of 2%
-  if(t==0.02){
+
+  if(t==0){
     print('saved')
     writeRaster(downstream_loss, 
-                paste0('../output/results/catch_losses/gdw_dor_2p_loss.tif'), 
+                paste0('../output/results/dor_yield_losses/gdw_dor_0p_loss_102026.tif'), 
                 overwrite=TRUE)}
+
+  
+    if(t==0.02){
+    print('saved')
+    writeRaster(downstream_loss, 
+                paste0('../output/results/dor_yield_losses/gdw_dor_2p_loss_102026.tif'), 
+                overwrite=TRUE)}
+
+  
+  if(t==0.04){
+    print('saved')
+    writeRaster(downstream_loss, 
+                paste0('../output/results/dor_yield_losses/gdw_dor_4p_loss_102026.tif'), 
+                overwrite=TRUE)}
+  
   }
+  
 
 
 # /---------------------------------------------------------------------------#
@@ -71,7 +88,7 @@ for (t in dor_thresh){
 # Rename df columns
 names(dor_thresh_df) <- c('thresh', 'dor_loss')
 # Save df
-write.csv(dor_thresh_df, '../output/dor/gdw_dor_thresholds.csv', row.names=F)
+write.csv(dor_thresh_df, '../output/results/dor/gdw_dor_thresholds_102024.csv', row.names=F)
 
 
 
